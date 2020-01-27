@@ -1,2 +1,2 @@
-# ServerChar
+# ServerChat
 Сервер чата подключаемого по адресу localhost:8189
