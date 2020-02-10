@@ -1,6 +1,6 @@
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
+import java.util.Enumeration;
 import java.util.Vector;
 
 public class ServerMain {
@@ -16,7 +16,7 @@ public class ServerMain {
 //            String str = AuthService.getNickByLoginAndPass("login1", "pass1");
 //            System.out.println(str);
             server = new ServerSocket(8189);
-            System.out.println("Сервер запущен!");
+            System.out.println("Сервер запущен!\n" + "IP: "+getLocalIpAddress()+":"+server.getLocalPort());
 
             while (true) {
                 socket = server.accept();
@@ -40,6 +40,31 @@ public class ServerMain {
             }
             AuthService.disconnect();
         }
+    }
+
+    public static String getLocalIpAddress() {
+        String ip = "";
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iface = interfaces.nextElement();
+                // filters out 127.0.0.1 and inactive interfaces
+                if (iface.isLoopback() || !iface.isUp() || iface.isVirtual())
+                    continue;
+
+
+                Enumeration<InetAddress> addresses = iface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress addr = addresses.nextElement();
+                    if (addr instanceof Inet4Address) {
+                        ip = addr.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+        return ip;
     }
 
     public void subscribe(ClientHandler client) {
