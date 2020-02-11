@@ -1,3 +1,6 @@
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,6 +12,9 @@ public class ClientHandler {
     private DataOutputStream out;
     private ServerMain server;
     private String nick;
+    final String password = "MZygpewJsCpRrfOr";
+    String salt = "6eda6a88846ad4cb";
+    TextEncryptor encryptors = Encryptors.text(password, salt);
 //    private List<String> blackList;
 
     public ClientHandler(ServerMain server, Socket socket) {
@@ -26,6 +32,7 @@ public class ClientHandler {
 
                         while (true) {
                             String str = in.readUTF();
+                            str = encryptors.decrypt(str);
                             if (str.startsWith("/auth")) {
                                 String[] tokes = str.split(" ");
                                 String newNick = AuthService.getNickByLoginAndPass(tokes[1], tokes[2]);
@@ -46,9 +53,12 @@ public class ClientHandler {
 
                         while (true) {
                             String str = in.readUTF();
+                            str = encryptors.decrypt(str);
                             if (str.startsWith("/")) {
                                 if (str.equals("/end")) {
-                                    out.writeUTF("/serverclosed");
+                                    String textToEncrypt = "/serverclosed";
+                                    String cipherText = encryptors.encrypt(textToEncrypt);
+                                    out.writeUTF(cipherText);
                                     break;
                                 }
                                 if (str.startsWith("/w ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
@@ -108,7 +118,9 @@ public class ClientHandler {
 
     public void sendMsg(String str) {
         try {
-            out.writeUTF(str);
+            String textToEncrypt = str;
+            String cipherText = encryptors.encrypt(textToEncrypt);
+            out.writeUTF(cipherText);
         } catch (IOException e) {
             e.printStackTrace();
         }
