@@ -16,7 +16,7 @@ public class ServerMain {
 //            String str = AuthService.getNickByLoginAndPass("login1", "pass1");
 //            System.out.println(str);
             server = new ServerSocket(8189);
-            System.out.println("Сервер запущен!\n" + "IP: "+getLocalIpAddress()+":"+server.getLocalPort());
+            System.out.println("Server is running!\n" + "Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
 
             while (true) {
                 socket = server.accept();
@@ -43,28 +43,18 @@ public class ServerMain {
     }
 
     public static String getLocalIpAddress() {
-        String ip = "";
+        String ip = null;
         try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface iface = interfaces.nextElement();
-                // filters out 127.0.0.1 and inactive interfaces
-                if (iface.isLoopback() || !iface.isUp() || iface.isVirtual())
-                    continue;
-
-
-                Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress addr = addresses.nextElement();
-                    if (addr instanceof Inet4Address) {
-                        ip = addr.getHostAddress();
-                    }
-                }
+            Enumeration<NetworkInterface> b = NetworkInterface.getNetworkInterfaces();
+            while (b.hasMoreElements()) {
+                for (InterfaceAddress f : b.nextElement().getInterfaceAddresses())
+                    if (f.getAddress().isSiteLocalAddress())
+                        return ip = String.valueOf(f.getAddress()).replace("/", "");
             }
         } catch (SocketException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        return ip;
+        return null;
     }
 
     public void subscribe(ClientHandler client) {
