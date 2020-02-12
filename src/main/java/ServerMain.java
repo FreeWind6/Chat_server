@@ -20,7 +20,7 @@ public class ServerMain {
 
             while (true) {
                 socket = server.accept();
-                System.out.println("Клиент подключился");
+//                System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
                 // clients.add(new ClientHandler(this, socket));
             }
@@ -79,8 +79,10 @@ public class ServerMain {
         for (ClientHandler o : clients) {
             if (o.getNick().equals(nickTo)) {
                 if (!o.checkBlackList(from.getNick())) {
-                    o.sendMsg(from.getNick() + ":" + " from " + nickTo + ": " + msg);
-                    from.sendMsg(from.getNick() + ":" + " to " + nickTo + ": " + msg);
+                    //получатель
+                    o.sendMsg(from.getNick() + ": " + msg + " (private to you)");
+                    //отправитель
+                    from.sendMsg(from.getNick() + ": " + msg + " (private to " + nickTo + ")");
                     return;
                 } else {
                     from.sendMsg("Пользователь " + nickTo + " занес вас в черный список");

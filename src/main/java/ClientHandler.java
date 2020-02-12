@@ -41,12 +41,13 @@ public class ClientHandler {
                                         sendMsg("/authok " + newNick);
                                         nick = newNick;
                                         server.subscribe(ClientHandler.this);
+                                        System.out.println("Клиент " + nick + " подключился!");
                                         break;
                                     } else {
-                                        sendMsg("Учетная запись уже используется");
+                                        sendMsg("Учетная запись уже используется!");
                                     }
                                 } else {
-                                    sendMsg("Неверный логин/пароль");
+                                    sendMsg("Неверный логин/пароль!");
                                 }
                             }
                         }
@@ -59,6 +60,7 @@ public class ClientHandler {
                                     String textToEncrypt = "/serverclosed";
                                     String cipherText = encryptors.encrypt(textToEncrypt);
                                     out.writeUTF(cipherText);
+                                    System.out.println("Клиент " + nick + " отключился!");
                                     break;
                                 }
                                 if (str.startsWith("/w ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
@@ -87,7 +89,7 @@ public class ClientHandler {
                             } else {
                                 server.broadcastMsg(ClientHandler.this, nick + ": " + str);
                             }
-                            System.out.println("Client: " + str);
+//                            System.out.println("Client: " + str);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
