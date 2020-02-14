@@ -1,3 +1,6 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.net.*;
 import java.util.Enumeration;
@@ -5,6 +8,7 @@ import java.util.Vector;
 
 public class ServerMain {
     private Vector<ClientHandler> clients;
+    static final Logger rootLogger = LogManager.getRootLogger();
 
     public ServerMain() {
         clients = new Vector<>();
@@ -16,7 +20,8 @@ public class ServerMain {
 //            String str = AuthService.getNickByLoginAndPass("login1", "pass1");
 //            System.out.println(str);
             server = new ServerSocket(8189);
-            System.out.println("Server is running!\n" + "Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
+            rootLogger.info("Server is running! Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
+//            System.out.println("Server is running!\n" + "Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
 
             while (true) {
                 socket = server.accept();
@@ -26,17 +31,20 @@ public class ServerMain {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                rootLogger.error(e.getStackTrace());
+//                e.printStackTrace();
             }
             try {
                 server.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                rootLogger.error(e.getStackTrace());
+//                e.printStackTrace();
             }
             AuthService.disconnect();
         }
@@ -52,7 +60,8 @@ public class ServerMain {
                         return ip = String.valueOf(f.getAddress()).replace("/", "");
             }
         } catch (SocketException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
         return null;
     }

@@ -1,3 +1,5 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 
@@ -16,6 +18,7 @@ public class ClientHandler {
     String salt = "6eda6a88846ad4cb";
     TextEncryptor encryptors = Encryptors.text(password, salt);
 //    private List<String> blackList;
+    static final Logger rootLogger = LogManager.getRootLogger();
 
     public ClientHandler(ServerMain server, Socket socket) {
         try {
@@ -29,7 +32,6 @@ public class ClientHandler {
                 @Override
                 public void run() {
                     try {
-
                         while (true) {
                             String str = in.readUTF();
                             str = encryptors.decrypt(str);
@@ -41,7 +43,8 @@ public class ClientHandler {
                                         sendMsg("/authok " + newNick);
                                         nick = newNick;
                                         server.subscribe(ClientHandler.this);
-                                        System.out.println("Клиент " + nick + " подключился!");
+                                        rootLogger.info("Клиент " + nick + " подключился!");
+//                                        System.out.println("Клиент " + nick + " подключился!");
                                         break;
                                     } else {
                                         sendMsg("Учетная запись уже используется!");
@@ -60,7 +63,8 @@ public class ClientHandler {
                                     String textToEncrypt = "/serverclosed";
                                     String cipherText = encryptors.encrypt(textToEncrypt);
                                     out.writeUTF(cipherText);
-                                    System.out.println("Клиент " + nick + " отключился!");
+                                    rootLogger.info("Клиент " + nick + " отключился!");
+//                                    System.out.println("Клиент " + nick + " отключился!");
                                     break;
                                 }
                                 if (str.startsWith("/w ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
@@ -92,29 +96,34 @@ public class ClientHandler {
 //                            System.out.println("Client: " + str);
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        rootLogger.error(e.getStackTrace());
+//                        e.printStackTrace();
                     } finally {
                         try {
                             in.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            rootLogger.error(e.getStackTrace());
+//                            e.printStackTrace();
                         }
                         try {
                             out.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            rootLogger.error(e.getStackTrace());
+//                            e.printStackTrace();
                         }
                         try {
                             socket.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            rootLogger.error(e.getStackTrace());
+//                            e.printStackTrace();
                         }
                         server.unsubscribe(ClientHandler.this);
                     }
                 }
             }).start();
         } catch (IOException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
     }
 
@@ -124,7 +133,8 @@ public class ClientHandler {
             String cipherText = encryptors.encrypt(textToEncrypt);
             out.writeUTF(cipherText);
         } catch (IOException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
     }
 

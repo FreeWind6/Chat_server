@@ -1,8 +1,12 @@
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 
 public class AuthService {
     private static Connection connection;
     private static Statement stmt;
+    static final Logger rootLogger = LogManager.getRootLogger();
 
     public static void connect() {
         try {
@@ -10,7 +14,8 @@ public class AuthService {
             connection = DriverManager.getConnection("jdbc:sqlite:mydb.db");
             stmt = connection.createStatement();
         } catch (Exception e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
     }
 
@@ -24,7 +29,8 @@ public class AuthService {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
         return null;
     }
@@ -38,7 +44,8 @@ public class AuthService {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
         return null;
     }
@@ -52,7 +59,8 @@ public class AuthService {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
         return null;
     }
@@ -66,7 +74,8 @@ public class AuthService {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
         return null;
     }
@@ -75,7 +84,8 @@ public class AuthService {
         try {
             connection.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            rootLogger.error(e.getStackTrace());
+//            e.printStackTrace();
         }
     }
 }
