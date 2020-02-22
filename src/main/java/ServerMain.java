@@ -16,37 +16,29 @@ public class ServerMain {
         Socket socket = null;
 
         try {
-            AuthService.connect();
-//            String str = AuthService.getNickByLoginAndPass("login1", "pass1");
-//            System.out.println(str);
+            MainDB.connect();
             server = new ServerSocket(8189);
             rootLogger.info("Server is running! Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
-//            System.out.println("Server is running!\n" + "Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
 
             while (true) {
                 socket = server.accept();
-//                System.out.println("Клиент подключился");
                 new ClientHandler(this, socket);
-                // clients.add(new ClientHandler(this, socket));
             }
 
         } catch (IOException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
                 rootLogger.error(e.getStackTrace());
-//                e.printStackTrace();
             }
             try {
                 server.close();
             } catch (IOException e) {
                 rootLogger.error(e.getStackTrace());
-//                e.printStackTrace();
             }
-            AuthService.disconnect();
+            MainDB.disconnect();
         }
     }
 
@@ -61,7 +53,6 @@ public class ServerMain {
             }
         } catch (SocketException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
         return null;
     }

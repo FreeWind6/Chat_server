@@ -3,7 +3,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
-public class AuthService {
+public class MainDB {
     private static Connection connection;
     private static Statement stmt;
     static final Logger rootLogger = LogManager.getRootLogger();
@@ -15,7 +15,6 @@ public class AuthService {
             stmt = connection.createStatement();
         } catch (Exception e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
     }
 
@@ -30,7 +29,6 @@ public class AuthService {
             }
         } catch (SQLException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
         return null;
     }
@@ -45,7 +43,6 @@ public class AuthService {
             }
         } catch (SQLException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
         return null;
     }
@@ -60,7 +57,6 @@ public class AuthService {
             }
         } catch (SQLException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
         return null;
     }
@@ -75,7 +71,6 @@ public class AuthService {
             }
         } catch (SQLException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
         return null;
     }
@@ -85,7 +80,6 @@ public class AuthService {
             connection.close();
         } catch (SQLException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
     }
 }

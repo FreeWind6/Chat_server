@@ -6,7 +6,10 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class ClientHandler {
     private Socket socket;
@@ -17,7 +20,6 @@ public class ClientHandler {
     final String password = "MZygpewJsCpRrfOr";
     String salt = "6eda6a88846ad4cb";
     TextEncryptor encryptors = Encryptors.text(password, salt);
-//    private List<String> blackList;
     static final Logger rootLogger = LogManager.getRootLogger();
 
     public ClientHandler(ServerMain server, Socket socket) {
@@ -26,7 +28,6 @@ public class ClientHandler {
             this.server = server;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-//            this.blackList = new ArrayList<>();
 
             new Thread(new Runnable() {
                 @Override
@@ -37,14 +38,14 @@ public class ClientHandler {
                             str = encryptors.decrypt(str);
                             if (str.startsWith("/auth")) {
                                 String[] tokes = str.split(" ");
-                                String newNick = AuthService.getNickByLoginAndPass(tokes[1], tokes[2]);
+                                String pass = md5Custom(tokes[2]);
+                                String newNick = MainDB.getNickByLoginAndPass(tokes[1], pass);
                                 if (newNick != null) {
                                     if (!server.isNickBusy(newNick)) {
                                         sendMsg("/authok " + newNick);
                                         nick = newNick;
                                         server.subscribe(ClientHandler.this);
                                         rootLogger.info("Клиент " + nick + " подключился!");
-//                                        System.out.println("Клиент " + nick + " подключился!");
                                         break;
                                     } else {
                                         sendMsg("Учетная запись уже используется!");
@@ -64,58 +65,48 @@ public class ClientHandler {
                                     String cipherText = encryptors.encrypt(textToEncrypt);
                                     out.writeUTF(cipherText);
                                     rootLogger.info("Клиент " + nick + " отключился!");
-//                                    System.out.println("Клиент " + nick + " отключился!");
                                     break;
                                 }
-                                if (str.startsWith("/w ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
+                                if (str.startsWith("/w ")) {
                                     String[] tokens = str.split(" ", 3);
-                                    //  String m = str.substring(tokens[1].length() + 4);
                                     server.sendPersonalMsg(ClientHandler.this, tokens[1], tokens[2]);
                                 }
-                                if (str.startsWith("/blacklist ")) { // /w nick3 lsdfhldf sdkfjhsdf wkerhwr
+                                if (str.startsWith("/blacklist ")) {
                                     String[] tokens = str.split(" ");
                                     if (tokens[1].equals(getNick())) {
                                         sendMsg("Вы не можете заблокировать самого себя!");
                                     } else {
-                                        String strGetNick = AuthService.getIdByNicknameFromMain(getNick());
-                                        String strTokens1 = AuthService.getIdByNicknameFromMain(tokens[1]);
+                                        String strGetNick = MainDB.getIdByNicknameFromMain(getNick());
+                                        String strTokens1 = MainDB.getIdByNicknameFromMain(tokens[1]);
                                         if (strTokens1 != null) {
-                                            String insertTable = AuthService.insertTable(strGetNick, strTokens1);
+                                            String insertTable = MainDB.insertTable(strGetNick, strTokens1);
                                             sendMsg("Вы добавили пользователя  " + tokens[1] + " в черный список!");
                                         } else {
                                             sendMsg("Пользователя " + tokens[1] + " нет в базе!");
                                         }
-
-
                                     }
-                                    //blackList.add(tokens[1]);
                                 }
                             } else {
                                 server.broadcastMsg(ClientHandler.this, nick + ": " + str);
                             }
-//                            System.out.println("Client: " + str);
                         }
                     } catch (IOException e) {
                         rootLogger.error(e.getStackTrace());
-//                        e.printStackTrace();
                     } finally {
                         try {
                             in.close();
                         } catch (IOException e) {
                             rootLogger.error(e.getStackTrace());
-//                            e.printStackTrace();
                         }
                         try {
                             out.close();
                         } catch (IOException e) {
                             rootLogger.error(e.getStackTrace());
-//                            e.printStackTrace();
                         }
                         try {
                             socket.close();
                         } catch (IOException e) {
                             rootLogger.error(e.getStackTrace());
-//                            e.printStackTrace();
                         }
                         server.unsubscribe(ClientHandler.this);
                     }
@@ -123,8 +114,30 @@ public class ClientHandler {
             }).start();
         } catch (IOException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
+    }
+
+    public static String md5Custom(String st) {
+        MessageDigest messageDigest = null;
+        byte[] digest = new byte[0];
+
+        try {
+            messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.reset();
+            messageDigest.update(st.getBytes());
+            digest = messageDigest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            rootLogger.error(e.getStackTrace());
+        }
+
+        BigInteger bigInt = new BigInteger(1, digest);
+        String md5Hex = bigInt.toString(16);
+
+        while (md5Hex.length() < 32) {
+            md5Hex = "0" + md5Hex;
+        }
+
+        return md5Hex;
     }
 
     public void sendMsg(String str) {
@@ -134,12 +147,11 @@ public class ClientHandler {
             out.writeUTF(cipherText);
         } catch (IOException e) {
             rootLogger.error(e.getStackTrace());
-//            e.printStackTrace();
         }
     }
 
-/*    public List<String> getBlackList() {
-        return blackList;
+/*    public static boolean contains(String str, String symbol) {
+        return str.contains(symbol);
     }*/
 
     public String getNick() {
@@ -147,9 +159,9 @@ public class ClientHandler {
     }
 
     public boolean checkBlackList(String nick) {
-        String strGetNickCheck = AuthService.getIdByNicknameFromMain(getNick());
-        String strTokensCheck = AuthService.getIdByNicknameFromMain(nick);
-        String getNick = AuthService.getIdByNick1AndNick2FromBlocklist(strGetNickCheck, strTokensCheck);
+        String strGetNickCheck = MainDB.getIdByNicknameFromMain(getNick());
+        String strTokensCheck = MainDB.getIdByNicknameFromMain(nick);
+        String getNick = MainDB.getIdByNick1AndNick2FromBlocklist(strGetNickCheck, strTokensCheck);
         if (getNick != null) {
             return true;
         }
