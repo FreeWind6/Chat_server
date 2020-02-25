@@ -2,6 +2,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,8 +19,10 @@ public class ClientHandler {
     private ServerMain server;
     private String nick;
     final String password = "MZygpewJsCpRrfOr";
-    String salt = "6eda6a88846ad4cb";
-    TextEncryptor encryptors = Encryptors.text(password, salt);
+    String salt1 = KeyGenerators.string().generateKey();
+    // https://razilov-code.ru/2018/03/16/aes-java/
+    TextEncryptor encryptors1 = Encryptors.text(password, salt1);
+
     static final Logger rootLogger = LogManager.getRootLogger();
 
     public ClientHandler(ServerMain server, Socket socket) {
@@ -35,7 +38,8 @@ public class ClientHandler {
                     try {
                         while (true) {
                             String str = in.readUTF();
-                            str = encryptors.decrypt(str);
+                            TextEncryptor encryptors2 = Encryptors.text(password, str.substring(0, 16));
+                            str = encryptors2.decrypt(str.substring(16));
                             if (str.startsWith("/auth")) {
                                 String[] tokes = str.split(" ");
                                 String pass = md5Custom(tokes[2]);
@@ -45,7 +49,7 @@ public class ClientHandler {
                                         sendMsg("/authok " + newNick);
                                         nick = newNick;
                                         server.subscribe(ClientHandler.this);
-                                        rootLogger.info("Клиент " + nick + " подключился!");
+                                        rootLogger.info("Сlient " + nick + " connected!");
                                         break;
                                     } else {
                                         sendMsg("Учетная запись уже используется!");
@@ -58,13 +62,15 @@ public class ClientHandler {
 
                         while (true) {
                             String str = in.readUTF();
-                            str = encryptors.decrypt(str);
+                            TextEncryptor encryptors2 = Encryptors.text(password, str.substring(0, 16));
+                            str = encryptors2.decrypt(str.substring(16));
                             if (str.startsWith("/")) {
                                 if (str.equals("/end")) {
                                     String textToEncrypt = "/serverclosed";
-                                    String cipherText = encryptors.encrypt(textToEncrypt);
+                                    String cipherText = encryptors1.encrypt(textToEncrypt);
+                                    cipherText = salt1 + "" + cipherText;
                                     out.writeUTF(cipherText);
-                                    rootLogger.info("Клиент " + nick + " отключился!");
+                                    rootLogger.info("Сlient " + nick + " disconnected!");
                                     break;
                                 }
                                 if (str.startsWith("/w ")) {
@@ -143,7 +149,8 @@ public class ClientHandler {
     public void sendMsg(String str) {
         try {
             String textToEncrypt = str;
-            String cipherText = encryptors.encrypt(textToEncrypt);
+            String cipherText = encryptors1.encrypt(textToEncrypt);
+            cipherText = salt1 + "" + cipherText;
             out.writeUTF(cipherText);
         } catch (IOException e) {
             rootLogger.error(e.getStackTrace());
