@@ -19,11 +19,14 @@ public class MainDB {
     }
 
     public static String getNickByLoginAndPass(String login, String pass) {
-
-        String sql = String.format("SELECT nickname FROM main where login = '%s' and password = '%s'", login, pass);
-
         try {
-            ResultSet rs = stmt.executeQuery(sql);
+            String sql = "SELECT nickname FROM main where login = ? and password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, pass);
+
+
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 return rs.getString(1);
             }
@@ -48,10 +51,12 @@ public class MainDB {
     }
 
     public static String getIdByNicknameFromMain(String nick) {
-        String sql = String.format("SELECT id FROM main where nickname = '%s'", nick);
-
         try {
-            ResultSet rs = stmt.executeQuery(sql);
+            String sql = "SELECT id FROM main where nickname = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, nick);
+
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 return rs.getString(1);
             }
@@ -62,10 +67,13 @@ public class MainDB {
     }
 
     public static String getIdByNick1AndNick2FromBlocklist(String who, String whom) {
-        String sql = String.format("SELECT id FROM blocklist WHERE who='%s' and whom='%s'", who, whom);
-
         try {
-            ResultSet rs = stmt.executeQuery(sql);
+            String sql = "SELECT id FROM blocklist WHERE who=? and whom=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, who);
+            preparedStatement.setString(2, whom);
+
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 return rs.getString(1);
             }
