@@ -97,7 +97,7 @@ public class ClientHandler {
                             }
                         }
                     } catch (IOException e) {
-                        rootLogger.error(e.getStackTrace());
+                        rootLogger.error("Maybe someone tried to connect, but failed. Error message: "+e.getStackTrace());
                     } finally {
                         try {
                             in.close();
