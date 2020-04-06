@@ -97,29 +97,29 @@ public class ClientHandler {
                             }
                         }
                     } catch (IOException e) {
-                        rootLogger.error("Maybe someone tried to connect, but failed. Error message: "+e.getStackTrace());
+                        rootLogger.error("Maybe someone tried to connect, but failed. Error message: "+e.getMessage());
                     } finally {
                         try {
                             in.close();
                         } catch (IOException e) {
-                            rootLogger.error(e.getStackTrace());
+                            rootLogger.error(e.getMessage());
                         }
                         try {
                             out.close();
                         } catch (IOException e) {
-                            rootLogger.error(e.getStackTrace());
+                            rootLogger.error(e.getMessage());
                         }
                         try {
                             socket.close();
                         } catch (IOException e) {
-                            rootLogger.error(e.getStackTrace());
+                            rootLogger.error(e.getMessage());
                         }
                         server.unsubscribe(ClientHandler.this);
                     }
                 }
             }).start();
         } catch (IOException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
     }
 
@@ -133,7 +133,7 @@ public class ClientHandler {
             messageDigest.update(st.getBytes());
             digest = messageDigest.digest();
         } catch (NoSuchAlgorithmException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
 
         BigInteger bigInt = new BigInteger(1, digest);
@@ -153,7 +153,7 @@ public class ClientHandler {
             cipherText = salt1 + "" + cipherText;
             out.writeUTF(cipherText);
         } catch (IOException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
     }
 

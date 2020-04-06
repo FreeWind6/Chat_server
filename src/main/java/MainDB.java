@@ -14,7 +14,7 @@ public class MainDB {
             connection = DriverManager.getConnection("jdbc:sqlite:mydb.db");
             stmt = connection.createStatement();
         } catch (Exception e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
     }
 
@@ -31,7 +31,7 @@ public class MainDB {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
         return null;
     }
@@ -45,7 +45,7 @@ public class MainDB {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
         return null;
     }
@@ -61,7 +61,7 @@ public class MainDB {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
         return null;
     }
@@ -78,7 +78,7 @@ public class MainDB {
                 return rs.getString(1);
             }
         } catch (SQLException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
         return null;
     }
@@ -87,7 +87,7 @@ public class MainDB {
         try {
             connection.close();
         } catch (SQLException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
     }
 }
