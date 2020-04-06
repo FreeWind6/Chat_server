@@ -26,17 +26,17 @@ public class ServerMain {
             }
 
         } catch (IOException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
-                rootLogger.error(e.getStackTrace());
+                rootLogger.error(e.getMessage());
             }
             try {
                 server.close();
             } catch (IOException e) {
-                rootLogger.error(e.getStackTrace());
+                rootLogger.error(e.getMessage());
             }
             MainDB.disconnect();
         }
@@ -52,7 +52,7 @@ public class ServerMain {
                         return ip = String.valueOf(f.getAddress()).replace("/", "");
             }
         } catch (SocketException e) {
-            rootLogger.error(e.getStackTrace());
+            rootLogger.error(e.getMessage());
         }
         return null;
     }
