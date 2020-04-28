@@ -18,7 +18,7 @@ public class ServerMain {
         try {
             MainDB.connect();
             server = new ServerSocket(8189);
-            rootLogger.info("Server is running! Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
+            rootLogger.warn("Server is running! Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
 
             while (true) {
                 socket = server.accept();

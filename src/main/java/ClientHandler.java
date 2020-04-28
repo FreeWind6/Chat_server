@@ -1,3 +1,5 @@
+import mysql.HibernateUtil;
+import mysql.Main;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -20,6 +22,7 @@ public class ClientHandler {
     private String nick;
     final String password = "MZygpewJsCpRrfOr";
     String salt1 = KeyGenerators.string().generateKey();
+    HibernateUtil hibernateUtil = new HibernateUtil();
     // https://razilov-code.ru/2018/03/16/aes-java/
     TextEncryptor encryptors1 = Encryptors.text(password, salt1);
 
@@ -43,13 +46,14 @@ public class ClientHandler {
                             if (str.startsWith("/auth")) {
                                 String[] tokes = str.split(" ");
                                 String pass = md5Custom(tokes[2]);
-                                String newNick = MainDB.getNickByLoginAndPass(tokes[1], pass);
+//                                String newNick = MainDB.getNickByLoginAndPass(tokes[1], pass);
+                                String newNick = hibernateUtil.getNickByLoginAndPass(tokes[1], pass);
                                 if (newNick != null) {
                                     if (!server.isNickBusy(newNick)) {
                                         sendMsg("/authok " + newNick);
                                         nick = newNick;
                                         server.subscribe(ClientHandler.this);
-                                        rootLogger.info("Сlient " + nick + " connected!");
+                                        rootLogger.warn("Сlient " + nick + " connected!");
                                         break;
                                     } else {
                                         sendMsg("Учетная запись уже используется!");
@@ -70,7 +74,7 @@ public class ClientHandler {
                                     String cipherText = encryptors1.encrypt(textToEncrypt);
                                     cipherText = salt1 + "" + cipherText;
                                     out.writeUTF(cipherText);
-                                    rootLogger.info("Сlient " + nick + " disconnected!");
+                                    rootLogger.warn("Сlient " + nick + " disconnected!");
                                     break;
                                 }
                                 if (str.startsWith("/w ")) {
@@ -82,10 +86,13 @@ public class ClientHandler {
                                     if (tokens[1].equals(getNick())) {
                                         sendMsg("Вы не можете заблокировать самого себя!");
                                     } else {
-                                        String strGetNick = MainDB.getIdByNicknameFromMain(getNick());
-                                        String strTokens1 = MainDB.getIdByNicknameFromMain(tokens[1]);
+//                                        String strGetNick = MainDB.getIdByNicknameFromMain(getNick());
+//                                        String strTokens1 = MainDB.getIdByNicknameFromMain(tokens[1]);
+                                        Main strGetNick = hibernateUtil.getMainByNicknameFromMain(getNick());
+                                        Main strTokens1 = hibernateUtil.getMainByNicknameFromMain(tokens[1]);
                                         if (strTokens1 != null) {
-                                            String insertTable = MainDB.insertTable(strGetNick, strTokens1);
+//                                            MainDB.insertTable(strGetNick, strTokens1);
+                                            hibernateUtil.insertTable(strGetNick, strTokens1);
                                             sendMsg("Вы добавили пользователя  " + tokens[1] + " в черный список!");
                                         } else {
                                             sendMsg("Пользователя " + tokens[1] + " нет в базе!");
@@ -97,7 +104,7 @@ public class ClientHandler {
                             }
                         }
                     } catch (IOException e) {
-                        rootLogger.error("Maybe someone tried to connect, but failed. Error message: "+e.getMessage());
+                        rootLogger.error("Maybe someone tried to connect, but failed. Error message: " + e.getMessage());
                     } finally {
                         try {
                             in.close();
@@ -157,18 +164,17 @@ public class ClientHandler {
         }
     }
 
-/*    public static boolean contains(String str, String symbol) {
-        return str.contains(symbol);
-    }*/
-
     public String getNick() {
         return nick;
     }
 
     public boolean checkBlackList(String nick) {
-        String strGetNickCheck = MainDB.getIdByNicknameFromMain(getNick());
-        String strTokensCheck = MainDB.getIdByNicknameFromMain(nick);
-        String getNick = MainDB.getIdByNick1AndNick2FromBlocklist(strGetNickCheck, strTokensCheck);
+//        String strGetNickCheck = MainDB.getIdByNicknameFromMain(getNick());
+//        String strTokensCheck = MainDB.getIdByNicknameFromMain(nick);
+//        String getNick = MainDB.getIdByNick1AndNick2FromBlocklist(strGetNickCheck, strTokensCheck);
+        Main strGetNickCheck = hibernateUtil.getMainByNicknameFromMain(getNick());
+        Main strTokensCheck = hibernateUtil.getMainByNicknameFromMain(nick);
+        String getNick = hibernateUtil.getIdByNick1AndNick2FromBlocklist(strGetNickCheck, strTokensCheck);
         if (getNick != null) {
             return true;
         }
