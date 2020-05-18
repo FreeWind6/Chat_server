@@ -36,10 +36,14 @@ public class HibernateUtil {
         try {
             session = sessionFactory.getCurrentSession();
             session.beginTransaction();
-            Blocklist blocklist = new Blocklist(who, whom);
-            session.save(blocklist);
+            Blocklist query = session.createQuery("SELECT i FROM Blocklist i WHERE i.who = :who AND i.whom = :whom", Blocklist.class)
+                    .setParameter("who", who)
+                    .setParameter("whom", whom)
+                    .getSingleResult();
             session.getTransaction().commit();
         } catch (NoResultException e) {
+            Blocklist blocklist = new Blocklist(who, whom);
+            session.save(blocklist);
             session.getTransaction().commit();
         }
     }
