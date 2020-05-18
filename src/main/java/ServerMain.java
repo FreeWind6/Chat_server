@@ -16,9 +16,9 @@ public class ServerMain {
         Socket socket = null;
 
         try {
-            MainDB.connect();
+//            MainSQLiteDB.connect();
             server = new ServerSocket(8189);
-            rootLogger.info("Server is running! Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
+            rootLogger.warn("Server is running! Address: " + getLocalIpAddress() + ":" + server.getLocalPort());
 
             while (true) {
                 socket = server.accept();
@@ -38,7 +38,7 @@ public class ServerMain {
             } catch (IOException e) {
                 rootLogger.error(e.getMessage());
             }
-            MainDB.disconnect();
+//            MainSQLiteDB.disconnect();
         }
     }
 

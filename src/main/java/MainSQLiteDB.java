@@ -3,7 +3,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
-public class MainDB {
+public class MainSQLiteDB {
     private static Connection connection;
     private static Statement stmt;
     static final Logger rootLogger = LogManager.getRootLogger();
