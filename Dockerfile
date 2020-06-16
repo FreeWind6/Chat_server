@@ -21,13 +21,21 @@ ENTRYPOINT ["java","-jar","/app.jar"]
 #В папке проекта выполняем команду
 #dicker build .
 #либо эту команду с заданием имени
-#docker build -t my-image . (даем имя)
+#docker build -t freewind6/freewind-chat-server . (даем имя)
 
 #Затем смотрим все наши образы и находим IMAGE ID нужного
 #docker images
 
 #Запускаем с перенаправлением портов
 #docker run -p 8189:8189 3f5c06630610 (3f5c06630610 - IMAGE ID)
+#или по имени
+#docker run -p 8189:8189 freewind6/freewind-chat-server
+
+#Загрузаем на сервер
+#docker push freewind6/freewind-chat-server (сделать docker login если проблемы авторизации)
+
+#После того как сделали push можно запусть на любой машине
+#docker run -p 8189:8189 freewind6/freewind-chat-server
 
 #Останавливаем
 #docker stop 3f5c06630610
