@@ -43,3 +43,10 @@ ENTRYPOINT ["java","-jar","/app.jar"]
 #Подсказки:
 #https://habr.com/ru/company/flant/blog/336654/
 #https://java-master.com/docker-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B/
+
+#Подключиться к контейнеру:
+#Сначала смотрим NAMES нужно контейнера
+#docker container ls
+
+#Затем подкляемся к нему
+#docker container attach [NAMES]
