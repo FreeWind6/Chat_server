@@ -20,6 +20,8 @@ ENTRYPOINT ["java","-jar","/app.jar"]
 
 #В папке проекта выполняем команду
 #dicker build .
+#либо эту команду с заданием имени
+#docker build -t my-image . (даем имя)
 
 #Затем смотрим все наши образы и находим IMAGE ID нужного
 #docker images
