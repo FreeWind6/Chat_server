@@ -15,3 +15,31 @@ COPY ${DB_FILE} mydb.db
 
 #Команда аналогична java -jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
+
+#Сборка проекта
+
+#В папке проекта выполняем команду
+#dicker build .
+
+#Затем смотрим все наши образы и находим IMAGE ID нужного
+#docker images
+
+#Запускаем с перенаправлением портов
+#docker run -p 8189:8189 3f5c06630610 (3f5c06630610 - IMAGE ID)
+
+#Останавливаем
+#docker stop 3f5c06630610
+
+#Удаляем, но сначала нужно удалить все контеинеры
+#docker rmi 3f5c06630610
+
+#Смотрим все контейнеры
+#docker ps
+#docker ps -a
+
+#Удаляем нужный
+#docker rm [Container-id]
+
+#Подсказки:
+#https://habr.com/ru/company/flant/blog/336654/
+#https://java-master.com/docker-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B/
