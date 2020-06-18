@@ -1,4 +1,6 @@
 # Chat Server
+![Java CI with Maven](https://github.com/FreeWind6/Chat_server/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master)
+
 Сервер чата подключаемого по адресу localhost:8189
 
 Для запуска приложения нужно перекинуть в ту же папку что и jar, файл базы данных. Пример базы находится в корне проекта "mydb.db".
