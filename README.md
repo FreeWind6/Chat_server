@@ -8,4 +8,14 @@
 Для запуска приложения нужно перекинуть в ту же папку что и jar, файл базы данных. Пример базы находится в корне проекта "mydb.db".
 Для запуска приложения необходимо скопмилировать проект mvn и ввести команду 
 
+Компиляция:
+    
+    mvn clean install
+    
+Запуск:
+
     java -jar ServerChar-1.0-SNAPSHOT-jar-with-dependencies.jar
+    
+Или запуск через Docker:
+
+    docker run -p 8189:8189 freewind6/freewind-chat-server
