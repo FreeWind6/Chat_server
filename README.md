@@ -1,5 +1,6 @@
 # Chat Server
 ![Java CI with Maven](https://github.com/FreeWind6/Chat_server/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/freewind6/Chat_server)
 
 Сервер чата подключаемого по адресу localhost:8189
 
