@@ -2,6 +2,7 @@
 ![Java CI with Maven](https://github.com/FreeWind6/Chat_server/workflows/Java%20CI%20with%20Maven/badge.svg?branch=master)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/freewind6/Chat_server)](https://github.com/FreeWind6/Chat_server/releases)
 [![license](https://img.shields.io/github/license/freeWind6/Chat_server)](https://github.com/FreeWind6/Chat_server/blob/master/LICENSE)
+[![Docker Pulls](https://img.shields.io/docker/pulls/freewind6/freewind-chat-server)](https://hub.docker.com/r/freewind6/freewind-chat-server)
 
 Сервер чата подключаемого по адресу localhost:8189
 
