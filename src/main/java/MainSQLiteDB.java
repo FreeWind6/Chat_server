@@ -3,6 +3,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
+// Данный класс в проекте устарел и не используется.
+// Существует только в качестве наглядного примера альтернативы Hibernate
+// Чтобы использовать данный класс необходимо его раскомментировать в классах ClientHandler и ServerMain,
+// и закомментировать классы Hibernate
 public class MainSQLiteDB {
     private static Connection connection;
     private static Statement stmt;
