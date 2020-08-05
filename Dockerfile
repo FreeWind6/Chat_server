@@ -19,7 +19,7 @@ ENTRYPOINT ["java","-jar","/app.jar"]
 #Сборка проекта
 
 #В папке проекта выполняем команду
-#dicker build .
+#docker build .
 #либо эту команду с заданием имени
 #docker build -t freewind6/freewind-chat-server . (даем имя)
 
